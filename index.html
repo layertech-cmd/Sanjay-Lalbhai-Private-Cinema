@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="build" content="sanjay-study-1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sanjay Lal Bhai Residence — Private Cinema</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--t1:#F5F5F7;--t2:#86868B;--t3:#6E6E73;--sep:rgba(255,255,255,.1);--blue:#0071E3;--green:#30D158;--orange:#FF9F0A;--red:#FF453A;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Inter","Helvetica Neue",Helvetica,Arial,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{height:100%;overflow:hidden;color:var(--t1);font-family:var(--font);-webkit-font-smoothing:antialiased;background:#000}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(110% 80% at 62% 48%,#26262a 0%,#101012 55%,#000 100%)}
+#stage{position:fixed;inset:0}
+#stage canvas{display:block;width:100%;height:100%;cursor:grab;touch-action:none}
+#stage canvas:active{cursor:grabbing}
+#labels{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.lbl{position:absolute;transform:translate(-50%,-100%);font-size:11.5px;font-weight:500;letter-spacing:-.01em;color:var(--t1);background:rgba(29,29,31,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:4px 10px;border-radius:999px;white-space:nowrap}
+.lbl.strong{background:rgba(245,245,247,.96);color:#1d1d1f;font-weight:600}
+.lbl.small{font-size:10.5px;padding:3px 8px}
+.lbl.alert{background:var(--red);color:#fff}
+.lbl.good{background:var(--green);color:#052b12}
+/* global nav — apple.com pattern */
+.gnav{position:fixed;top:0;left:0;right:0;height:44px;background:rgba(22,22,23,.8);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);z-index:10}
+.gin{max-width:1024px;height:100%;margin:0 auto;padding:0 22px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.gin img{height:15px;width:auto;display:block;opacity:.92}
+.steps{display:flex;gap:4px}
+.steps button,.lnk{font:inherit;font-size:12px;letter-spacing:-.01em;color:rgba(232,232,237,.8);background:none;border:none;padding:6px 10px;cursor:pointer;border-radius:6px;transition:color .2s}
+.steps button:hover,.lnk:hover{color:#fff}
+.steps button.on{color:#fff;font-weight:600}
+/* local nav */
+.lnav{position:fixed;top:44px;left:0;right:0;height:52px;background:rgba(0,0,0,.55);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(255,255,255,.08);z-index:9}
+.lin{max-width:1024px;height:100%;margin:0 auto;padding:0 22px;display:flex;align-items:center;justify-content:space-between}
+.ltitle{font-size:21px;font-weight:600;letter-spacing:.011em}
+.ltitle span{color:var(--t2);font-weight:400}
+.ltitle .dims{font-style:normal;font-size:12px;font-weight:500;color:var(--t2);margin-left:14px;padding:4px 10px;border-radius:980px;background:rgba(118,118,128,.24);vertical-align:3px}
+.opts{display:flex;align-items:center;gap:6px}
+.opts button{font:inherit;font-size:12px;letter-spacing:-.01em;color:rgba(245,245,247,.8);background:none;border:none;padding:5px 11px;border-radius:980px;cursor:pointer}
+.opts button:hover{color:#fff}
+.opts button.on{background:var(--blue);color:#fff}
+button:focus-visible{outline:2px solid #2997ff;outline-offset:2px}
+/* info card */
+#card{position:fixed;left:28px;top:120px;width:360px;max-height:calc(100% - 200px);overflow-y:auto;background:rgba(29,29,31,.72);backdrop-filter:saturate(180%) blur(30px);-webkit-backdrop-filter:saturate(180%) blur(30px);border-radius:22px;padding:28px 26px 22px}
+#card::-webkit-scrollbar{width:0}
+.eyebrow{font-size:14px;font-weight:600;letter-spacing:-.01em;background:linear-gradient(90deg,#f5d0a0,#e8a6ff 60%,#9ab8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+#card h1{font-size:34px;line-height:1.1;font-weight:600;letter-spacing:-.015em;margin:6px 0 12px}
+#card p.cap{font-size:15px;line-height:1.47;color:var(--t2);letter-spacing:-.01em}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:22px 16px;margin-top:24px}
+.tile .v{font-size:30px;font-weight:600;letter-spacing:-.02em;line-height:1.05;display:flex;align-items:center;gap:8px}
+.tile .v small{font-size:15px;font-weight:600;color:var(--t2);letter-spacing:0}
+.tile .k{font-size:12.5px;color:var(--t2);margin-top:5px;line-height:1.35}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+.d-ok{background:var(--green)}.d-warn{background:var(--orange)}.d-bad{background:var(--red)}
+.list{margin-top:22px;border-top:1px solid var(--sep)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 0;font-size:13.5px;border-bottom:1px solid var(--sep);letter-spacing:-.01em}
+.row span{color:var(--t2)}
+.row b{font-weight:500;text-align:right}
+.pill{display:flex;margin-top:20px;background:rgba(118,118,128,.24);border-radius:980px;padding:3px}
+.pill button{flex:1;font:inherit;font-size:13px;font-weight:500;color:var(--t1);background:none;border:none;border-radius:980px;padding:8px 10px;cursor:pointer}
+.pill button.on{background:#F5F5F7;color:#1d1d1f}
+details{margin-top:16px;font-size:13px;color:var(--t2)}
+details summary{cursor:pointer;color:#2997FF;list-style:none}
+details summary::after{content:" ›"}
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12.5px}
+td,th{padding:6px 2px;border-bottom:1px solid var(--sep);text-align:left}
+th{color:var(--t3);font-weight:500}
+.fine{font-size:12px;color:var(--t3);line-height:1.5;margin-top:16px}
+/* bottom controls */
+.paddles{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:rgba(29,29,31,.72);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-radius:980px;padding:6px 8px}
+.paddles .pb{width:36px;height:36px;border-radius:50%;border:none;background:rgba(210,210,215,.16);color:#f5f5f7;font-size:20px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.paddles .pb:hover{background:rgba(210,210,215,.28)}
+.dots{display:flex;gap:8px;padding:0 4px}
+.dots button{width:8px;height:8px;border-radius:980px;border:none;background:rgba(245,245,247,.35);cursor:pointer;padding:0;transition:width .3s,background .3s}
+.dots button.on{width:28px;background:#f5f5f7}
+.views{position:fixed;right:28px;bottom:26px;display:flex;gap:2px;padding:4px;background:rgba(29,29,31,.72);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-radius:980px}
+.views button{font:inherit;font-size:12px;font-weight:500;color:var(--t2);background:none;border:none;border-radius:980px;padding:7px 12px;cursor:pointer}
+.views button.on{background:rgba(118,118,128,.36);color:var(--t1)}
+.views button:hover:not(.on){color:var(--t1)}
+@media (max-width:1000px){.steps{display:none}#card{left:12px;right:12px;width:auto;top:auto;bottom:calc(76px + env(safe-area-inset-bottom,0px));max-height:44vh}}
+.grab{display:none}
+@media (max-width:760px){
+  .gin{padding:0 14px}.gin img{height:13px}
+  .lnav{height:46px}.lin{padding:0 14px;gap:8px}
+  .ltitle{font-size:15px;white-space:nowrap}.ltitle span,.ltitle .dims{display:none}
+  .opts{gap:2px}.opts button{font-size:11.5px;padding:5px 9px}
+  #card{top:auto;left:8px;right:8px;bottom:calc(64px + env(safe-area-inset-bottom,0px));max-height:42vh;padding:8px 18px 16px;border-radius:20px}
+  .grab{display:block;width:100%;height:22px;border:none;background:none;cursor:pointer;position:relative}
+  .grab::before{content:"";position:absolute;left:50%;top:8px;width:38px;height:5px;margin-left:-19px;border-radius:3px;background:rgba(245,245,247,.35)}
+  .eyebrow{font-size:12px}
+  #card h1{font-size:22px;margin:3px 0 8px}
+  #card p.cap{font-size:13.5px}
+  .tiles{gap:14px 12px;margin-top:14px}.tile .v{font-size:22px}.tile .v small{font-size:12px}.tile .k{font-size:11.5px}
+  .list{margin-top:14px}.row{font-size:12.5px;padding:9px 0}
+  .pill{margin-top:14px}.fine{font-size:11px}
+  #card.min{max-height:none}
+  #card.min .cap,#card.min .tiles,#card.min .list,#card.min details,#card.min .fine{display:none}
+  .paddles{bottom:calc(12px + env(safe-area-inset-bottom,0px));padding:4px 6px;gap:10px}
+  .paddles .pb{width:32px;height:32px;font-size:18px}
+  .views{flex-direction:column;right:8px;top:100px;bottom:auto;border-radius:14px;padding:3px}
+  .views button{padding:7px 9px;font-size:11px}
+  .lbl{font-size:10px;padding:3px 8px}.lbl.small{font-size:9px;padding:2px 6px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+#sheet{position:fixed;left:416px;right:28px;top:120px;bottom:92px;overflow:auto;background:rgba(24,24,26,.96);border-radius:18px;padding:18px 22px 24px;display:none;z-index:4}
+#sheet.on{display:block}
+.lbl.warn{background:var(--orange);color:#2b1700}
+#bassSeg button{font-size:12px;padding:8px 4px}
+#sheet::-webkit-scrollbar{width:0}
+.shTabs{display:flex;gap:2px;padding:3px;background:rgba(118,118,128,.24);border-radius:980px;width:max-content;margin-bottom:14px}
+.shTabs button{font:inherit;font-size:12.5px;font-weight:500;color:var(--t1);background:none;border:none;border-radius:980px;padding:7px 14px;cursor:pointer}
+.shTabs button.on{background:#F5F5F7;color:#1d1d1f}
+.dwg{width:100%;height:auto;display:block}
+.dwgNote{font-size:12px;color:var(--t2);margin-top:10px;line-height:1.5}
+.key{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--t2);margin-top:8px}
+.key i{display:inline-block;width:14px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+ol.rev{margin:18px 0 0 18px;font-size:13.5px;line-height:1.45;color:var(--t1)}
+ol.rev li{margin-bottom:9px}
+ol.rev li span{color:var(--t2)}
+#card{z-index:5}
+#shBody{overflow-x:auto}
+@media (max-width:1000px){#sheet{left:10px;right:10px;top:104px;bottom:calc(200px + env(safe-area-inset-bottom,0px));padding:14px 14px 20px}}
+@media (max-width:760px){.dwg{min-width:720px}}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="labels"></div>
+<nav class="gnav" aria-label="Design steps"><div class="gin">
+  <img src="data:image/png;base64,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" alt="Sound Sense">
+  <div class="steps" id="dock"><button data-step="1">Room &amp; Entry</button><button data-step="2">Viewing Angles</button><button data-step="3">Speakers</button><button data-step="4">WaveForming</button><button data-step="5">LED Screen</button><button data-step="6">Drawing Changes</button></div>
+  <button class="lnk" id="savePng">Save image</button>
+</div></nav>
+<div class="lnav"><div class="lin">
+  <div class="ltitle">Sanjay Lal Bhai <span>Private Cinema</span><em class="dims">5.86 × 8.0 m finished · 3.73 m ceiling</em></div>
+  <div class="opts" id="optSeg"><button data-cfg="r3">R3 layout</button><button data-cfg="wf22">Revised</button></div>
+</div></div>
+<section id="card" aria-live="polite"><button class="grab" id="grab" aria-label="Show or hide details"></button><div id="cardBody"></div></section>
+<section id="sheet" aria-label="Revised drawings"><div class="shTabs" id="shTabs"><button data-sh="front">Front elevation</button><button data-sh="rear">Rear elevation</button><button data-sh="plan">Plan</button></div><div id="shBody"></div></section>
+<div class="paddles"><button class="pb" id="prev" aria-label="Previous step">‹</button><div class="dots" id="dots"><button data-step="1" aria-label="Step 1"></button><button data-step="2" aria-label="Step 2"></button><button data-step="3" aria-label="Step 3"></button><button data-step="4" aria-label="Step 4"></button><button data-step="5" aria-label="Step 5"></button><button data-step="6" aria-label="Step 6"></button></div><button class="pb" id="next" aria-label="Next step">›</button></div>
+<div class="views" id="views"><button data-view="iso">3D</button><button data-view="top">Plan</button><button data-view="section">Section</button><button data-view="seat">Seat</button></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+/* ---------- room data, scaled from the R3 drawings (08-07-2025) ---------- */
+const C=343, W=5.864, L=8.0, H=3.733, RIS=.6, PLAT_V=4.15, SW=4.8, SH=2.7, SCRV=.06, EYE=1.0, PITCH=.78;
+const R1={v:3.80,y:0,n:5}, R2={v:6.05,y:RIS,n:5,mlp:2};
+const ARM_F=.56, BACK_R=.29, AL={u0:-1.1,v0:6.2};        // entry vestibule (rear-left) at +600 level
+const rowU=(n,cx)=>Array.from({length:n},(_,i)=>cx+(i-(n-1)/2)*PITCH);
+const DBA={w:.67,h:.85,d:.33};                              // MAG Theatron DBA15, W × H × D
+let state={cfg:'wf22',step:1,view:'iso',sh:'front'};
+const SB=()=>.63;                                           // LED bottom stays at 630 (subs may sit partly behind it; drivers stay clear)
+const RR=()=>(state.cfg==='wf24'||state.cfg==='wf44')?.84:1.308;                  // rear-surround centre from side wall
+
+function geom(){ const cx=W/2; R1.us=rowU(R1.n,cx); R2.us=rowU(R2.n,cx);
+  return {cx,r1:R1,r2:R2,mlp:{u:cx,v:R2.v,y:R2.y+EYE},ear1:R1.y+EYE,d1:R1.v-SCRV,d2:R2.v-SCRV}; }
+function viewAngle(u,v){ const a=Math.atan2((W/2-SW/2)-u,v-SCRV), b=Math.atan2((W/2+SW/2)-u,v-SCRV); return Math.abs(b-a)*180/Math.PI; }
+
+/* speakers as drawn in R3 (B&W 800 D4). Every surround and top is aimed at the MLP (row 2 centre), as in the elevations */
+function speakers(){ const g=geom(),sb=SB(),s=[],cx=g.cx,rr=RR();
+  s.push({n:'L',u:.30,v:.72,y:1.1,k:'801'},{n:'R',u:W-.30,v:.72,y:1.1,k:'801'});
+  s.push({n:'C upper',u:cx,v:.25,y:sb+SH+.19,k:'htm',aim:1,flip:1},{n:'C lower',u:cx,v:.25,y:sb-.19,k:'htm',aim:1});   // mirrored pair: upper inverted, both tweeters against the LED edge
+  s.push({n:'Lw',u:.24,v:2.85,y:1.25,k:'805',aim:1},{n:'Rw',u:W-.24,v:2.85,y:1.25,k:'805',aim:1});
+  s.push({n:'Ls',u:.24,v:5.3,y:1.85,k:'805',aim:1},{n:'Rs',u:W-.24,v:5.3,y:1.85,k:'805',aim:1});
+  s.push({n:'Lrs',u:rr,v:L-.24,y:RIS+1.17,k:'805',aim:1},{n:'Rrs',u:W-rr,v:L-.24,y:RIS+1.17,k:'805',aim:1});
+  [['tf',1.95],['tm',4.3],['tr',6.6]].forEach(([k,v])=>s.push({n:'L'+k,u:cx-1.565,v,y:H+.2,k:'805',top:1,aim:1},{n:'R'+k,u:cx+1.565,v,y:H+.2,k:'805',top:1,aim:1}));
+  s.forEach(p=>{ p.az=Math.atan2(Math.abs(p.u-cx),g.mlp.v-p.v)*180/Math.PI; if(p.top) p.el=Math.atan2(p.y-g.mlp.y,Math.hypot(p.u-cx,p.v-g.mlp.v))*180/Math.PI; });
+  return s; }
+/* Trinnov median-angle check for the wides: line from MLP through the midpoint of L and Ls */
+function medianWide(){ const g=geom(),s=speakers(),l=s.find(x=>x.n==='L'),ls=s.find(x=>x.n==='Ls'); const mu=(l.u+ls.u)/2,mv=(l.v+ls.v)/2; return Math.atan2(g.cx-mu,g.mlp.v-mv)*180/Math.PI; }
+
+/* subwoofers */
+function subs(){ if(state.cfg==='r3') return [
+    {n:'DB1D',u:.30,v:.21,y:.21,w:.42,h:.42,d:.42,front:1},{n:'DB1D',u:W-.30,v:.21,y:.21,w:.42,h:.42,d:.42,front:1},
+    {n:'DB1D',u:.30,v:L-.21,y:RIS+.21,w:.42,h:.42,d:.42,front:0},{n:'DB1D',u:W-.30,v:L-.21,y:RIS+.21,w:.42,h:.42,d:.42,front:0}];
+  const a=[{n:'F1',u:W/4,v:-.145,y:.02+DBA.w/2,w:DBA.h,h:DBA.w,d:DBA.d,front:1},{n:'F2',u:3*W/4,v:-.145,y:.02+DBA.w/2,w:DBA.h,h:DBA.w,d:DBA.d,front:1},
+    {n:'R1',u:W/4,v:L+.145,y:RIS+2.35,w:DBA.w,h:DBA.h,d:DBA.d,front:0},{n:'R2',u:3*W/4,v:L+.145,y:RIS+2.35,w:DBA.w,h:DBA.h,d:DBA.d,front:0}];
+  if(state.cfg==='wf44') a.push({n:'F3',u:W/4,v:.35,y:H+.19,w:DBA.h,h:DBA.d,d:DBA.w,front:1,ceil:1},{n:'F4',u:3*W/4,v:.35,y:H+.19,w:DBA.h,h:DBA.d,d:DBA.w,front:1,ceil:1});
+  if((state.cfg==='wf24'||state.cfg==='wf44')) a.push({n:'R3',u:W/4,v:L+.145,y:RIS+.783,w:DBA.w,h:DBA.h,d:DBA.d,front:0},{n:'R4',u:3*W/4,v:L+.145,y:RIS+.783,w:DBA.w,h:DBA.h,d:DBA.d,front:0});
+  return a; }
+
+/* ---------- seat-to-seat bass model ----------
+   Room modes of the main room (shoebox 5.864 × 8.0 × 3.733), 30–100 Hz.
+   R3 corners: all four subs on one feed (no WaveForming).
+   WaveForming: per frequency, the sub drives are optimised so the field around the heads matches a plane wave
+   travelling front to back (Trinnov's WaveForming target). Tuned on 40 points around the heads, scored at the 10 seats. */
+const MODES=(()=>{ const m=[]; for(let a=0;a<=8;a++)for(let b=0;b<=4;b++)for(let c=0;c<=10;c++){ const f=C/2*Math.sqrt((a/W)**2+(b/H)**2+(c/L)**2); if(f<240) m.push({a,b,c,f,e:(a?2:1)*(b?2:1)*(c?2:1)}); } return m; })();
+function G1(q,u,y,v,f){ let re=0,im=0; const qv=Math.min(L,Math.max(0,q.v)),qy=Math.min(H,q.y); for(const m of MODES){ const pr=Math.cos(m.a*Math.PI*u/W)*Math.cos(m.b*Math.PI*y/H)*Math.cos(m.c*Math.PI*v/L), ps=Math.cos(m.a*Math.PI*q.u/W)*Math.cos(m.b*Math.PI*qy/H)*Math.cos(m.c*Math.PI*qv/L);
+  const dr=m.f*m.f-f*f,di=f*Math.max(m.f,8)/9,d=dr*dr+di*di,k=m.e*pr*ps; re+=k*dr/d; im-=k*di/d; } return [re,im]; }
+function csolve(A,b){ const n=b.length;
+  for(let i=0;i<n;i++){ let pv=i; for(let r=i+1;r<n;r++) if(Math.hypot(...A[r][i])>Math.hypot(...A[pv][i])) pv=r; [A[i],A[pv]]=[A[pv],A[i]]; [b[i],b[pv]]=[b[pv],b[i]];
+    const [pr,pi]=A[i][i],den=pr*pr+pi*pi; for(let r=i+1;r<n;r++){ const [ar,ai]=A[r][i],fr=(ar*pr+ai*pi)/den,fi=(ai*pr-ar*pi)/den; for(let c=i;c<n;c++){ const [xr,xi]=A[i][c]; A[r][c]=[A[r][c][0]-(fr*xr-fi*xi),A[r][c][1]-(fr*xi+fi*xr)]; } const [yr,yi]=b[i]; b[r]=[b[r][0]-(fr*yr-fi*yi),b[r][1]-(fr*yi+fi*yr)]; } }
+  const x=Array(n); for(let i=n-1;i>=0;i--){ let [sr,si]=b[i]; for(let c=i+1;c<n;c++){ const [ar,ai]=A[i][c],[xr,xi]=x[c]; sr-=ar*xr-ai*xi; si-=ar*xi+ai*xr; } const [pr,pi]=A[i][i],den=pr*pr+pi*pi; x[i]=[(sr*pr+si*pi)/den,(si*pr-sr*pi)/den]; } return x; }
+function fieldAt(src,w,p,f){ let re=0,im=0; src.forEach((q,i)=>{ const [gr,gi]=G1(q,p.u,p.y,p.v,f),[wr,wi]=w[i]; re+=gr*wr-gi*wi; im+=gr*wi+gi*wr; }); return 20*Math.log10(Math.hypot(re,im)+1e-12); }
+function wfWeights(src,pts,f){ const k=2*Math.PI*f/C,G=pts.map(p=>src.map(q=>G1(q,p.u,p.y,p.v,f))),n=src.length;
+  const A=[...Array(n)].map((_,i)=>[...Array(n)].map((_,j)=>{ let r=0,im=0; G.forEach(row=>{ const [ar,ai]=row[i],[br,bi]=row[j]; r+=ar*br+ai*bi; im+=ar*bi-ai*br; }); return [r,im]; }));
+  let tr=0; for(let i=0;i<n;i++) tr+=A[i][i][0]; for(let i=0;i<n;i++) A[i][i]=[A[i][i][0]+1e-2*tr/n,A[i][i][1]];
+  const b=[...Array(n)].map((_,i)=>{ let r=0,im=0; G.forEach((row,pI)=>{ const [ar,ai]=row[i],tr_=Math.cos(-k*pts[pI].v),ti=Math.sin(-k*pts[pI].v); r+=ar*tr_+ai*ti; im+=ar*ti-ai*tr_; }); return [r,im]; });
+  return csolve(A,b); }
+const STAT={};
+function bassStats(cfg,seats){ if(STAT[cfg]) return STAT[cfg]; const src=subs(),fr=[]; for(let f=30;f<=100;f+=2) fr.push(f);
+  const pts=[]; seats.forEach(s=>[[-.3,0],[.3,0],[0,-.25],[0,.25]].forEach(([du,dv])=>pts.push({u:s.u+du,y:s.y,v:s.v+dv})));
+  const lvF=fr.map(f=>{ const w=cfg==='r3'?src.map(()=>[1,0]):wfWeights(src,pts,f); return seats.map(s=>fieldAt(src,w,s,f)); });
+  const lv=seats.map((_,i)=>lvF.map(c=>c[i])); let worst=0;
+  const mean=fr.map((_,k)=>{ const col=lv.map(r=>r[k]); worst=Math.max(worst,Math.max(...col)-Math.min(...col)); return 10*Math.log10(col.reduce((a,b)=>a+10**(b/10),0)/col.length); });
+  const mm=mean.reduce((a,b)=>a+b,0)/mean.length, dev=lv.map(r=>Math.max(...r.map((x,k)=>Math.abs(x-mean[k]))));
+  return STAT[cfg]={fr,rel:lv.map(r=>r.map(x=>x-mm)),worst,dev,ok:dev.filter(d=>d<=3).length}; }
+function curveSVG(st){ const w=320,h=150,x=f=>28+(f-30)/70*(w-36),y=d=>h/2-d*(h/2-14)/15; let o=`<svg viewBox="0 0 ${w} ${h+16}" style="width:100%;margin-top:14px" font-family="inherit">`;
+  [-10,-5,0,5,10].forEach(d=>o+=`<line x1="28" x2="${w-8}" y1="${y(d)}" y2="${y(d)}" stroke="rgba(255,255,255,${d?'.07':'.18'})"/><text x="22" y="${y(d)+3}" fill="#6E6E73" font-size="8.5" text-anchor="end">${d>0?'+':''}${d}</text>`);
+  [30,50,70,100].forEach(f=>o+=`<text x="${x(f)}" y="${h+10}" fill="#6E6E73" font-size="8.5" text-anchor="middle">${f} Hz</text>`);
+  st.rel.forEach((r,i)=>o+=`<polyline fill="none" stroke="${i<5?'#FF9F0A':'#30D158'}" stroke-width="1.3" stroke-opacity=".85" points="${r.map((d,k)=>x(st.fr[k]).toFixed(1)+','+y(Math.max(-15,Math.min(15,d))).toFixed(1)).join(' ')}"/>`);
+  return o+`</svg><div class="key"><span><i style="background:#FF9F0A"></i>Row 1 seats</span><span><i style="background:#30D158"></i>Row 2 seats</span><span>dB, relative to the room average</span></div>`; }
+
+/* ---------- renderer ---------- */
+const stage=document.getElementById('stage');
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1)); renderer.setClearColor(0x000000,0); renderer.localClippingEnabled=true; stage.appendChild(renderer.domElement);
+const scene=new THREE.Scene(), persp=new THREE.PerspectiveCamera(58,1,.05,120), ortho=new THREE.OrthographicCamera(-5,5,5,-5,-100,200); let camera=ortho;
+scene.add(new THREE.HemisphereLight(0xffffff,0x6a6a6a,.9));
+const k1=new THREE.DirectionalLight(0xffffff,.5); k1.position.set(-5,12,-7); scene.add(k1);
+const k2=new THREE.DirectionalLight(0xffffff,.22); k2.position.set(9,6,10); scene.add(k2);
+const MAT=(c,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.9,metalness:0},o));
+const M={floor:MAT(0xDAD8D3),wall:MAT(0xEFEEEA,{side:THREE.DoubleSide}),ghost:MAT(0xEFEEEA,{transparent:true,opacity:.05,depthWrite:false}),
+ wallG:MAT(0xEFEEEA,{transparent:true,opacity:.12,depthWrite:false,side:THREE.DoubleSide}),riser:MAT(0xC9C6C0),led:new THREE.MeshBasicMaterial({color:0xF3C77B}),
+ rShell:MAT(0xE7E4DF,{roughness:.7}),rSeat:MAT(0xD9D5CE,{roughness:.75}),rBase:MAT(0x6a6a6a,{roughness:.6}),cup:MAT(0x2a2a2a),
+ body:MAT(0xB8B3AB,{roughness:.8}),bodyM:MAT(0xA59E94,{roughness:.8}),spk:MAT(0x2B2B2B,{roughness:.6}),
+ subF:MAT(0xFF9F0A,{roughness:.55}),subR:MAT(0xC97A06,{roughness:.55}),subOld:MAT(0x3a3a3a,{roughness:.5}),
+ door:MAT(0xB9A58E),gloss:MAT(0x111113,{roughness:.22,metalness:.15}),plinth:MAT(0x3a3b3d,{roughness:.35,metalness:.7}),cone:MAT(0x9c9ea2,{roughness:.55,metalness:.2}),mid:MAT(0xcfcfcf,{roughness:.45,metalness:.25}),ring:MAT(0x050505,{roughness:.8}),dome:MAT(0xe8e8ea,{roughness:.15,metalness:.8}),frame:MAT(0x1e1e1e,{roughness:.5,metalness:.3}),pocket:MAT(0xFF9F0A,{transparent:true,opacity:.35,depthWrite:false})};
+const EDGE=new THREE.LineBasicMaterial({color:0x96938D});
+const root=new THREE.Group(); scene.add(root);
+const labelsEl=document.getElementById('labels'); let labels=[],walls=[],G={},Gm=null;
+const P=(u,y,v)=>new THREE.Vector3(u,y,v);
+const edges=m=>{ m.add(new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry,25),EDGE)); return m; };
+function box(x0,x1,y0,y1,z0,z1,mat,par,noE){ const m=new THREE.Mesh(new THREE.BoxGeometry(Math.max(.002,x1-x0),Math.max(.002,y1-y0),Math.max(.002,z1-z0)),mat); m.position.set((x0+x1)/2,(y0+y1)/2,(z0+z1)/2); if(!noE) edges(m); (par||root).add(m); return m; }
+function lbox(u0,u1,v0,v1,y0,y1,mat,par,noE){ const a=P(u0,y0,v0),b=P(u1,y1,v1); return box(Math.min(a.x,b.x),Math.max(a.x,b.x),y0,y1,Math.min(a.z,b.z),Math.max(a.z,b.z),mat,par,noE); }
+function label(t,pos,cls,grp){ const el=document.createElement('div'); el.className='lbl '+(cls||''); el.textContent=t; labelsEl.appendChild(el); const l={el,pos,grp:grp||'base'}; labels.push(l); return l; }
+function lines(pts,color,par,op){ const l=new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color,transparent:op!==undefined,opacity:op===undefined?1:op})); (par||root).add(l); return l; }
+const waves=[];
+function clear(){ while(root.children.length){ const c=root.children.pop(); c.traverse(o=>{ if(o.geometry) o.geometry.dispose(); }); } labels.forEach(l=>l.el.remove()); labels=[]; walls=[]; G={}; waves.length=0; }
+
+function screenTex(){ const c=document.createElement('canvas'); c.width=512;c.height=288; const x=c.getContext('2d'); const g=x.createLinearGradient(0,0,0,288);
+  g.addColorStop(0,'#5d6f7f');g.addColorStop(.55,'#c9b79c');g.addColorStop(.6,'#e9d3ae');g.addColorStop(1,'#3d3a36'); x.fillStyle=g;x.fillRect(0,0,512,288);
+  x.fillStyle='#2c2a27';x.beginPath();x.moveTo(0,220);for(let i=0;i<=512;i+=16)x.lineTo(i,200+Math.sin(i*.02)*15+Math.sin(i*.07)*6);x.lineTo(512,288);x.lineTo(0,288);x.fill(); return new THREE.CanvasTexture(c); }
+const TEX=screenTex();
+
+function recliner(u,y,v,mlp){
+  const g=new THREE.Group(); const add=(geo,mat,x,yy,z,rx,e)=>{ const m=new THREE.Mesh(geo,mat); m.position.set(x,yy,z); if(rx) m.rotation.x=rx; if(e) edges(m); g.add(m); return m; };
+  const B=(w,h,d)=>new THREE.BoxGeometry(w,h,d);
+  add(B(.74,.1,.9),M.rBase,0,.05,-.02,0,1);
+  add(B(.12,.52,.86),M.rShell,-.31,.36,-.01,0,1); add(B(.12,.52,.86),M.rShell,.31,.36,-.01,0,1);
+  add(new THREE.CylinderGeometry(.04,.04,.012,20),M.cup,-.31,.625,.3); add(new THREE.CylinderGeometry(.04,.04,.012,20),M.cup,.31,.625,.3);
+  add(B(.5,.18,.6),M.rSeat,0,.39,.08,0,1); add(B(.5,.66,.2),M.rShell,0,.78,-.33,-.2,1);
+  const hr=add(new THREE.CylinderGeometry(.085,.085,.46,20),M.rSeat,0,1.08,-.4); hr.rotation.z=Math.PI/2;
+  add(B(.48,.24,.08),M.rSeat,0,.24,.44,0,1);
+  const bm=mlp?M.bodyM:M.body; add(B(.34,.5,.2),bm,0,.76,-.16,-.22); add(B(.3,.14,.46),bm,0,.53,.12); add(new THREE.SphereGeometry(.1,20,16),bm,0,1.03,-.2);
+  g.position.copy(P(u,y,v-.14)); g.rotation.y=Math.PI; root.add(g); }
+
+function build(){
+  clear(); Gm=geom(); const T=.23,cx=Gm.cx,sb=SB(),D0=6.54,D1=7.7;
+  document.querySelectorAll('#optSeg button').forEach(b=>b.classList.toggle('on',(b.dataset.cfg==='r3')===(state.cfg==='r3')));
+  const wg=(nx,nz)=>{ const g=new THREE.Group(); g.userData.n=new THREE.Vector3(nx,0,nz); root.add(g); walls.push(g); return g; };
+  // floor, platform, vestibule
+  box(0,W,-.04,0,0,L,M.floor); box(AL.u0,0,-.04,RIS,AL.v0,L,M.riser);
+  lbox(0,W,PLAT_V,L,0,RIS,M.riser); lbox(0,W,PLAT_V,PLAT_V+.03,RIS-.018,RIS+.004,M.led,null,true);
+  const aL=R1.us[0]-.42, aR=R1.us[R1.n-1]+.42, s0=R1.v-ARM_F;
+  [[0,aL-.03],[aR+.03,W]].forEach(([u0,u1])=>{ for(let k=1;k<=3;k++){ const v0=s0+(k-1)*(PLAT_V-s0)/3.2; lbox(u0,u1,v0,PLAT_V,0,.15*k,M.riser); lbox(u0,u1,v0,v0+.03,.15*k-.018,.15*k+.004,M.led,null,true); } });
+  // walls (N = rear wall at z<0; S = screen wall)
+  const N=wg(0,1); box(AL.u0-T,W+T,0,H,L,L+T,M.wall,N);
+  G.front=wg(0,-1); box(-T,W+T,0,H,-T,0,M.wall,G.front);
+  const Wg=wg(-1,0); box(-T,0,0,H,0,AL.v0,M.wall,Wg); box(AL.u0-T,AL.u0,RIS+2.1,H,D0,D1,M.wall,Wg); box(AL.u0-T,AL.u0,0,H,AL.v0,D0,M.wall,Wg); box(AL.u0-T,AL.u0,0,H,D1,L,M.wall,Wg);
+  box(AL.u0-T,0,0,H,AL.v0-T,AL.v0,M.wall,Wg);
+  const E=wg(1,0); box(W,W+T,0,H,0,L,M.wall,E);
+  box(AL.u0-.05,AL.u0,RIS,RIS+2.1,D0,D1,M.door);
+  label('Entry · rear-left vestibule at +600',P(AL.u0/2,RIS+2.4,L-.9),'strong','e');
+  label('AHU room (outside)',P(W+.9,1.6,L-1.2),'small','e');
+  label('+600 platform',P(W-.5,RIS+.15,PLAT_V+.9),'small','e'); label('4 × 150 aisle steps',P(.45,.5,s0+.2),'small','e');
+  { const g=G.dim=new THREE.Group(); root.add(g); const y=.02,o=.45,tk=.18,c=0xF5F5F7;
+    lines([new THREE.Vector3(0,y,L+o),new THREE.Vector3(W,y,L+o),new THREE.Vector3(0,y,L+o-tk),new THREE.Vector3(0,y,L+o+tk),new THREE.Vector3(W,y,L+o-tk),new THREE.Vector3(W,y,L+o+tk)],c,g);
+    lines([new THREE.Vector3(W+o,y,0),new THREE.Vector3(W+o,y,L),new THREE.Vector3(W+o-tk,y,0),new THREE.Vector3(W+o+tk,y,0),new THREE.Vector3(W+o-tk,y,L),new THREE.Vector3(W+o+tk,y,L)],c,g);
+    label('5,864 finished (6,765 structural)',new THREE.Vector3(W/2,.1,L+o),'strong','e');
+    label('≈ 8.0 m finished (9,240 structural)',new THREE.Vector3(W+o,.1,L/2),'strong','e');
+    label('3,733 to false ceiling',new THREE.Vector3(W+o,H/2,L+o),'strong','e'); }
+  // LED wall
+  lbox(cx-SW/2,cx+SW/2,0,SCRV,sb,sb+SH,M.frame);
+  const sm=new THREE.Mesh(new THREE.PlaneGeometry(SW-.02,SH-.02),new THREE.MeshBasicMaterial({map:TEX,transparent:true,opacity:1})); G.screen=sm; sm.position.copy(P(cx,sb+SH/2,SCRV+.002)); root.add(sm);
+  label('219″ LED · 4,800 × 2,700 · bottom '+Math.round(sb*1000),P(cx,sb+SH+.55,SCRV),'','base');
+  // seats
+  Gm.seats=[];
+  [R1,R2].forEach(r=>r.us.forEach((u,i)=>{ const m=r.mlp===i; recliner(u,r.y,r.v,m); Gm.seats.push({u,v:r.v,y:r.y+EYE,m,row:r===R1?1:2}); }));
+  label('Row 1 · 5 recliners on floor',P(R1.us[4]+.8,1.35,R1.v),'small','base');
+  label('Row 2 · 5 recliners on +600 · MLP centre',P(R2.us[4]+.6,RIS+1.35,R2.v),'small','base');
+  buildAngles(); buildSpeakers(); buildBass(); buildLED(); applyStep(false); }
+
+function buildAngles(){ const g=G.ang=new THREE.Group(); root.add(g); const cx=Gm.cx,sb=SB();
+  const picks=[Gm.seats.find(s=>s.row===1&&s.u===cx), Gm.seats.find(s=>s.m)];
+  picks.forEach((s,i)=>{ const h=P(s.u,s.y,s.v-.06), eL=P(cx-SW/2,s.y,SCRV), eR=P(cx+SW/2,s.y,SCRV);
+    const geo=new THREE.BufferGeometry().setFromPoints([h,eL,eR]); geo.setIndex([0,1,2]); geo.computeVertexNormals();
+    g.add(new THREE.Mesh(geo,new THREE.MeshBasicMaterial({color:i?0x30D158:0xFF453A,transparent:true,opacity:.2,side:THREE.DoubleSide,depthWrite:false})));
+    lines([h,eL,h,eR],i?0x30D158:0xFF453A,g); const ang=viewAngle(s.u,s.v); s.ang=ang;
+    label((i?'Row 2 MLP · ':'Row 1 · ')+ang.toFixed(0)+'°',P(s.u,s.y+.35,s.v-.9),i?'good':'alert','ang'); });
+  Gm.ang1=picks[0].ang; Gm.ang2=picks[1].ang;
+  [[.84,'Closest · 61°'],[1.26,'Reference · 44°'],[1.8,'Farthest · 33°']].forEach(([k,t])=>{ const v=SCRV+k*SW; if(v>L-.05) return; lines([P(.05,.02,v),P(W-.05,.02,v)],0x8e8e93,g,.8); label(t+' ('+k+'× width)',P(W-1.1,.12,v),'small','ang'); });
+  const m=Gm.mlp,e=P(cx,m.y,m.v); lines([e,P(cx,sb,SCRV),e,P(cx,sb+SH,SCRV)],0xFF9F0A,g);
+  const clr=sb+(m.y-sb)*Gm.d1/Gm.d2-Gm.ear1; Gm.clr=clr;
+  label('Sightline clears row-1 eyes by '+Math.round(clr*1000)+' mm',P(cx,Gm.ear1+Math.max(0,clr)+.35,R1.v-.4),clr>=.1?'strong':'alert','ang');
+  const vert=(ey,d)=>(Math.atan2(sb+SH-ey,d)-Math.atan2(sb-ey,d))*180/Math.PI; Gm.vert1=vert(Gm.ear1,Gm.d1); Gm.vert2=vert(m.y,Gm.d2); Gm.up1=Math.atan2(sb+SH-Gm.ear1,Gm.d1)*180/Math.PI; }
+
+/* B&W 800 D4 models (front faces +z). Curved Matrix cabinet, Turbine head, Solid Body tweeter-on-top */
+function tearGeo(w,d,h){ const f=-d*.45,b=d*.55,hw=w/2,sh=new THREE.Shape(); sh.moveTo(-hw,f); sh.lineTo(hw,f);
+  sh.bezierCurveTo(hw*1.04,f+d*.42,hw*.5,b,0,b); sh.bezierCurveTo(-hw*.5,b,-hw*1.04,f+d*.42,-hw,f);
+  const gm=new THREE.ExtrudeGeometry(sh,{depth:h,bevelEnabled:true,bevelThickness:.012,bevelSize:.012,bevelSegments:3,curveSegments:28}); gm.rotateX(-Math.PI/2); return gm; }
+function driver(g,x,y,z,r,mat){ const ring=new THREE.Mesh(new THREE.RingGeometry(r*.86,r,40),M.ring); ring.position.set(x,y,z); g.add(ring);
+  const c=new THREE.Mesh(new THREE.CircleGeometry(r*.86,40),mat); c.position.set(x,y,z-.001); g.add(c);
+  const cap=new THREE.Mesh(new THREE.SphereGeometry(r*.28,20,12,0,Math.PI*2,0,Math.PI/2),mat); cap.rotation.x=Math.PI/2; cap.position.set(x,y,z); g.add(cap); }
+function tweeter(g,y,z0,len,r){ const t=new THREE.Mesh(new THREE.CylinderGeometry(r,r*.55,len,28),M.gloss); t.rotation.x=Math.PI/2; t.position.set(0,y,z0); g.add(t);
+  const nose=new THREE.Mesh(new THREE.CylinderGeometry(r*1.05,r,.012,28),M.plinth); nose.rotation.x=Math.PI/2; nose.position.set(0,y,z0+len/2); g.add(nose);
+  const d=new THREE.Mesh(new THREE.SphereGeometry(r*.6,20,12,0,Math.PI*2,0,Math.PI/2),M.dome); d.rotation.x=Math.PI/2; d.position.set(0,y,z0+len/2+.006); g.add(d); }
+function make801(){ const g=new THREE.Group(), D=.6, zf=D*.45+.02;
+  const pl=new THREE.Mesh(new THREE.BoxGeometry(.44,.05,.58),M.plinth); pl.position.set(0,.025,-.02); g.add(pl);
+  const cab=new THREE.Mesh(tearGeo(.49,D,.84),M.gloss); cab.position.y=.06; g.add(cab);
+  driver(g,0,.34,zf,.125,M.cone); driver(g,0,.66,zf,.125,M.cone);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(.17,40,28),M.gloss); head.scale.set(1,.88,1.15); head.position.set(0,1.05,.03); g.add(head);
+  const hz=.03+.17*1.15-.012; driver(g,0,1.05,hz,.085,M.mid);
+  const neck=new THREE.Mesh(new THREE.CylinderGeometry(.03,.04,.06,20),M.gloss); neck.position.set(0,1.18,.02); g.add(neck);
+  tweeter(g,1.225,.05,.26,.032); return g; }
+function make805(){ const g=new THREE.Group(), D=.34, zf=D*.45+.02;
+  const cab=new THREE.Mesh(tearGeo(.24,D,.34),M.gloss); cab.position.y=-.21; g.add(cab);
+  driver(g,0,-.04,zf,.085,M.mid);
+  const neck=new THREE.Mesh(new THREE.CylinderGeometry(.022,.03,.05,20),M.gloss); neck.position.set(0,.15,.02); g.add(neck);
+  tweeter(g,.19,.04,.2,.026); return g; }
+function makeHTM(){ const g=new THREE.Group(), D=.371, zf=D*.45+.02;
+  const cab=new THREE.Mesh(tearGeo(.847,D,.26),M.gloss); cab.position.y=-.167; g.add(cab);
+  driver(g,-.27,-.03,zf,.1,M.cone); driver(g,.27,-.03,zf,.1,M.cone); driver(g,0,-.03,zf,.08,M.mid);
+  const neck=new THREE.Mesh(new THREE.CylinderGeometry(.022,.03,.05,20),M.gloss); neck.position.set(0,.11,.02); g.add(neck);
+  tweeter(g,.15,.05,.22,.028); return g; }
+function spkMesh(s,g){ const mlp=Gm.mlp; let m;
+  if(s.k==='801'){ m=make801(); m.position.copy(P(s.u,0,s.v)); m.lookAt(P(mlp.u,0,mlp.v)); }
+  else { m=s.k==='htm'?makeHTM():make805(); m.position.copy(P(s.u,s.y,s.v)); m.lookAt(s.aim?P(mlp.u,mlp.y,mlp.v):P(s.u,s.y,s.v+5)); if(s.flip) m.rotateZ(Math.PI); }
+  g.add(m); return m; }
+function subMesh(s,g){ const m=new THREE.Mesh(new THREE.BoxGeometry(s.w,s.h,s.d),state.cfg==='r3'?M.subOld:(s.front?M.subF:M.subR)); edges(m); m.position.copy(P(s.u,s.y,s.v)); g.add(m); return m; }
+
+function buildSpeakers(){ const g=G.spk=new THREE.Group(); root.add(g); const m=P(Gm.mlp.u,Gm.mlp.y,Gm.mlp.v),pts=[];
+  speakers().forEach(s=>{ const mesh=spkMesh(s,g); const p=P(s.u,s.y,s.v); pts.push(m,p);
+    label(s.n+'  '+(s.top?Math.round(s.el)+'° up':Math.round(s.az)+'°'),P(s.u,(s.k==='801'?1.55:s.y+(s.top?.32:.36)),s.v),'small','spk'); });
+  subs().forEach(s=>{ subMesh(s,g); label((state.cfg==='r3'?'DB1D':'DBA15 '+s.n),P(s.u,s.y+s.h/2+.18,s.v),'small','spk'); });
+  lines(pts,0xAEAAA3,g,.6); const mk=new THREE.Mesh(new THREE.SphereGeometry(.06,16,12),new THREE.MeshBasicMaterial({color:0xFF453A})); mk.position.copy(m); g.add(mk); }
+
+/* WaveForming animation: front subs launch a flat wavefront, rear subs absorb it.
+   Corner subs: spherical fronts and their wall reflections, clipped to the room. */
+const CLIP=[new THREE.Plane(new THREE.Vector3(1,0,0),0),new THREE.Plane(new THREE.Vector3(-1,0,0),W),new THREE.Plane(new THREE.Vector3(0,1,0),0),new THREE.Plane(new THREE.Vector3(0,-1,0),H),new THREE.Plane(new THREE.Vector3(0,0,1),0),new THREE.Plane(new THREE.Vector3(0,0,-1),L)];
+let sheetTex=null; const sphereGeo=new THREE.SphereGeometry(1,48,28);
+function mkSheetTex(){ const c=document.createElement('canvas'); c.width=256;c.height=160; const x=c.getContext('2d');
+  const g=x.createRadialGradient(128,80,10,128,80,150); g.addColorStop(0,'rgba(255,95,70,1)'); g.addColorStop(.7,'rgba(230,60,45,.85)'); g.addColorStop(1,'rgba(200,40,35,.55)'); x.fillStyle=g; x.fillRect(0,0,256,160); return new THREE.CanvasTexture(c); }
+function buildBass(){ const g=G.bass=new THREE.Group(); root.add(g); G.subMeshes=[];
+  subs().forEach(s=>{ const m=subMesh(s,g); G.subMeshes.push({m,front:s.front}); label(state.cfg==='r3'?'DB1D · corner':'DBA15 '+s.n+(s.ceil?' · ceiling void':''),P(s.u,s.y+s.h/2+.18,s.v),'small','bass'); });
+  if(state.cfg!=='r3'){ label('Emit · front wall, below the LED',P(Gm.cx,.95,.1),'strong','bass'); label('Absorb · rear wall',P(Gm.cx,H+.15,L-.1),'strong','bass'); }
+  G.waves=new THREE.Group(); g.add(G.waves); sheetTex=sheetTex||mkSheetTex();
+  const st=bassStats(state.cfg,Gm.seats); Gm.bst=st; Gm.seats.forEach((s,i)=>{ const d=st.dev[i]; label('±'+d.toFixed(1)+' dB',P(s.u,s.y+.32,s.v),d<=3?'good':(d<=6?'warn':'alert'),'bass'); });
+  G.spawnT=0; G.t=0; }
+function spawn(){
+  if(state.cfg!=='r3'){ const mat=new THREE.MeshBasicMaterial({map:sheetTex,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false});
+    const sh=new THREE.Mesh(new THREE.PlaneGeometry(W-.08,H-.08),mat);
+    const ed=new THREE.LineSegments(new THREE.EdgesGeometry(sh.geometry),new THREE.LineBasicMaterial({color:0xff6b5e,transparent:true,opacity:0})); sh.add(ed);
+    G.waves.add(sh); waves.push({type:'sheet',m:sh,ed,v:.35});
+    subs().filter(s=>s.front).forEach(s=>{ const m=new THREE.Mesh(sphereGeo,new THREE.MeshBasicMaterial({color:0xff5a46,transparent:true,opacity:.3,depthWrite:false,side:THREE.DoubleSide,clippingPlanes:CLIP})); m.position.copy(P(s.u,s.y,0)); m.scale.setScalar(.01); G.waves.add(m); waves.push({type:'let',m,r:0}); });
+  } else {
+    subs().forEach(s=>{ const v=s.v,pts=[[s.u,s.y,v],[-s.u,s.y,v],[2*W-s.u,s.y,v],[s.u,-s.y,v],[s.u,2*H-s.y,v],[s.u,s.y,-v],[s.u,s.y,2*L-v]];
+      pts.forEach((p,k)=>{ const m=new THREE.Mesh(sphereGeo,new THREE.MeshBasicMaterial({color:k?0xff8a70:0xff4a3a,transparent:true,opacity:0,depthWrite:false,side:THREE.DoubleSide,clippingPlanes:CLIP})); m.position.copy(P(p[0],p[1],p[2])); m.scale.setScalar(.01); G.waves.add(m); waves.push({type:'sph',m,r:0,img:k>0}); }); }); } }
+const SPEED=1.45, EVERY=.85;
+function tickWaves(dt){ if(!G.waves) return; G.t+=dt; G.spawnT-=dt; if(G.spawnT<=0){ spawn(); G.spawnT=EVERY; }
+  for(let i=waves.length-1;i>=0;i--){ const w=waves[i];
+    if(w.type==='sheet'){ w.v+=SPEED*dt; const fin=Math.min(1,(w.v-.35)/.5), fout=Math.min(1,Math.max(0,(L-.12-w.v)/.7)); const op=.36*fin*fout; w.m.material.opacity=op; w.ed.material.opacity=op*1.6; w.m.position.copy(P(W/2,H/2,w.v)); if(w.v>L-.12){ G.waves.remove(w.m); w.m.geometry.dispose(); waves.splice(i,1); } }
+    else if(w.type==='let'){ w.r+=SPEED*dt; w.m.scale.setScalar(Math.max(.01,w.r)); w.m.material.opacity=.3*Math.max(0,1-w.r/.8); if(w.r>.8){ G.waves.remove(w.m); waves.splice(i,1); } }
+    else { w.r+=SPEED*dt; w.m.scale.setScalar(Math.max(.01,w.r)); w.m.material.opacity=(w.img?.12:.2)*Math.max(0,1-w.r/9.5); if(w.r>9.5){ G.waves.remove(w.m); waves.splice(i,1); } } }
+  const rear=waves.some(w=>w.type==='sheet'&&w.v>L-.8);
+  G.subMeshes.forEach(s=>{ const k=1+(s.front?.05*Math.max(0,Math.sin(G.t*2*Math.PI/EVERY)):(rear?.06:0)*Math.abs(Math.sin(G.t*9))); s.m.scale.setScalar(k); }); }
+
+function buildLED(){ const g=G.led=new THREE.Group(); root.add(g); const sb=SB(),cx=Gm.cx,m=Gm.mlp;
+  const e1=P(cx,Gm.ear1,R1.v-.06),e2=P(cx,m.y,m.v); [e1,e2].forEach((e,i)=>lines([e,P(cx,sb,SCRV),e,P(cx,sb+SH,SCRV)],i?0x30D158:0xFF9F0A,g));
+  label('Row 1 · '+Gm.vert1.toFixed(0)+'° tall · '+Gm.up1.toFixed(0)+'° up to top',P(cx,Gm.ear1+.45,R1.v-.3),Gm.vert1>34?'alert':'strong','led');
+  label('Row 2 · '+Gm.vert2.toFixed(0)+'° tall',P(cx,m.y+.45,m.v-.3),'good','led');
+  if(state.cfg!=='r3') label('DBA15 top edge 60 mm behind the LED · driver clear by ≈85 mm',P(cx,.35,SCRV+.9),'strong','led'); }
+
+/* ---------- drawings (SVG, mm) ---------- */
+const DW={line:'#D8D8DC',dim:'#A1A1A6',new:'#FF9F0A',old:'#FF453A',led:'#64D2FF',spk:'#8E8E93'};
+const f0=n=>Math.round(n).toLocaleString('en-IN');
+function dimH(x1,x2,y,t,up){ const o=up?-60:60; return `<g stroke="${DW.dim}" stroke-width="6"><line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}"/><line x1="${x1}" y1="${y-50}" x2="${x1}" y2="${y+50}"/><line x1="${x2}" y1="${y-50}" x2="${x2}" y2="${y+50}"/></g><text x="${(x1+x2)/2}" y="${y+(up?-40:110)}" fill="${DW.dim}" font-size="96" text-anchor="middle">${t}</text>`; }
+function dimV(x,y1,y2,t,left){ return `<g stroke="${DW.dim}" stroke-width="6"><line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}"/><line x1="${x-50}" y1="${y1}" x2="${x+50}" y2="${y1}"/><line x1="${x-50}" y1="${y2}" x2="${x+50}" y2="${y2}"/></g><text x="${x+(left?-40:40)}" y="${(y1+y2)/2+32}" fill="${DW.dim}" font-size="96" text-anchor="${left?'end':'start'}">${t}</text>`; }
+const rect=(x,y,w,h,st,fill,dash,sw)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill||'none'}" stroke="${st}" stroke-width="${sw||10}" ${dash?'stroke-dasharray="40 30"':''}/>`;
+const xmark=(x,y,w,h,c)=>`<g stroke="${c}" stroke-width="10"><line x1="${x}" y1="${y}" x2="${x+w}" y2="${y+h}"/><line x1="${x+w}" y1="${y}" x2="${x}" y2="${y+h}"/></g>`;
+const txt=(x,y,t,c,sz,a)=>`<text x="${x}" y="${y}" fill="${c||DW.line}" font-size="${sz||96}" text-anchor="${a||'middle'}">${t}</text>`;
+const KEY=`<div class="key"><span><i style="background:${DW.new}"></i>New or moved</span><span><i style="background:${DW.old}"></i>Removed (R3)</span><span><i style="border:2px dashed ${DW.new}"></i>Phase 2 or ideal, optional</span><span><i style="background:${DW.led}"></i>LED wall</span></div>`;
+
+/* B&W outlines for the drawings */
+function e801(x,Y){ const c=x+245; let o=`<g stroke="${DW.spk}" stroke-width="9" fill="rgba(142,142,147,.12)">`;
+  o+=`<rect x="${c-220}" y="${Y(.05)}" width="440" height="50" rx="10"/>`;
+  o+=`<path d="M ${c-245} ${Y(.06)} V ${Y(.82)} Q ${c-245} ${Y(.9)} ${c-170} ${Y(.9)} H ${c+170} Q ${c+245} ${Y(.9)} ${c+245} ${Y(.82)} V ${Y(.06)} Z"/>`;
+  o+=`<ellipse cx="${c}" cy="${Y(1.05)}" rx="170" ry="150"/><rect x="${c-32}" y="${Y(1.26)}" width="64" height="60" rx="30"/><line x1="${c}" y1="${Y(1.2)}" x2="${c}" y2="${Y(1.2)}"/>`;
+  [.34,.66].forEach(h=>o+=`<circle cx="${c}" cy="${Y(h)}" r="125"/><circle cx="${c}" cy="${Y(h)}" r="36"/>`);
+  o+=`<circle cx="${c}" cy="${Y(1.05)}" r="85"/><circle cx="${c}" cy="${Y(1.05)}" r="24"/></g>`; return o; }
+function eHTM(cx,yb,Y,flip){ const cb=flip?yb+.044:yb, pb=flip?yb:yb+.29, dc=cb+.145;
+  let o=`<g stroke="${DW.spk}" stroke-width="9" fill="rgba(142,142,147,.12)"><rect x="${cx-423}" y="${Y(cb+.29)}" width="847" height="290" rx="70"/><rect x="${cx-30}" y="${Y(pb+.044)}" width="60" height="44" rx="22"/>`;
+  [-270,270].forEach(d=>o+=`<circle cx="${cx+d}" cy="${Y(dc)}" r="100"/>`); return o+`<circle cx="${cx}" cy="${Y(dc)}" r="80"/></g>`; }
+function pTear(u,v,w,d,c,fill){ const mlp=geom().mlp, dx=(mlp.u-u)*1000, dy=(mlp.v-v)*1000, a=-Math.atan2(dx,dy)*180/Math.PI, x=u*1000, y=v*1000, hw=w/2, f=d*.45, b=d*.55;
+  return `<path transform="rotate(${a.toFixed(1)} ${x} ${y})" d="M ${x-hw} ${y+f} H ${x+hw} C ${x+hw*1.04} ${y+f-d*.42} ${x+hw*.5} ${y-b} ${x} ${y-b} C ${x-hw*.5} ${y-b} ${x-hw*1.04} ${y+f-d*.42} ${x-hw} ${y+f} Z" fill="${fill||'rgba(142,142,147,.15)'}" stroke="${c||DW.spk}" stroke-width="10"/><line transform="rotate(${a.toFixed(1)} ${x} ${y})" x1="${x}" y1="${y+f}" x2="${x}" y2="${y+f+220}" stroke="${c||DW.spk}" stroke-width="6" stroke-dasharray="20 16"/>`; }
+function frontSVG(){ const Wm=W*1000,Y=y=>4250-y*1000,sb=630,st=sb+2700,cxm=Wm/2,q=Wm/4;
+  let s=`<svg class="dwg" viewBox="-950 -300 8300 5100" font-family="Inter,system-ui,sans-serif">`;
+  s+=rect(-450,0,Wm+900,4250,DW.line,'none',0,8)+`<line x1="-450" y1="${Y(H)}" x2="${Wm+450}" y2="${Y(H)}" stroke="${DW.spk}" stroke-width="8"/>`+txt(Wm+470,Y(H)+30,'False ceiling',DW.dim,80,'start')+txt(Wm+470,60,'RCC',DW.dim,80,'start');
+  s+=`<line x1="0" y1="${Y(H)}" x2="0" y2="4250" stroke="${DW.spk}" stroke-width="6" stroke-dasharray="20 20"/><line x1="${Wm}" y1="${Y(H)}" x2="${Wm}" y2="4250" stroke="${DW.spk}" stroke-width="6" stroke-dasharray="20 20"/>`;
+  [90,Wm-510].forEach(x=>{ s+=rect(x,Y(.42),420,420,DW.old,'none',1,8)+xmark(x,Y(.42),420,420,DW.old); });
+  s+=txt(300,4250+130,'DB1D removed',DW.old,70)+txt(Wm-300,4250+130,'DB1D removed',DW.old,70);
+  [q,3*q].forEach(c=>{ s+=rect(c-425,Y(.69),850,670,DW.new,'rgba(255,159,10,.28)',0,12)+`<circle cx="${c}" cy="${Y(.355)}" r="190" fill="rgba(255,159,10,.15)" stroke="${DW.new}" stroke-width="10"/><line x1="${c-260}" y1="${Y(.545)}" x2="${c+260}" y2="${Y(.545)}" stroke="${DW.new}" stroke-width="6" stroke-dasharray="16 12"/>`; });
+  s+=rect(532,Y(st/1000),4800,2700,DW.led,'rgba(100,210,255,.10)',0,12)+txt(cxm,Y(1.95),'219″ LED · 4,800 × 2,700',DW.led,120);
+  s+=txt(q,Y(.69)+230,'DBA15',DW.new,76)+txt(3*q,Y(.69)+230,'DBA15',DW.new,76);
+  [q,3*q].forEach(c=>s+=rect(c-425,Y(H+.35),850,330,DW.new,'none',1,10)+`<circle cx="${c}" cy="${Y(H+.02)}" r="14" fill="${DW.new}"/>`+txt(c,Y(H+.35)-30,'Ideal · DBA15 in ceiling void, firing down',DW.new,62));
+  s+=e801(55,Y)+e801(Wm-545,Y)+txt(300,Y(1.3)-40,'801 D4',DW.spk,80)+txt(Wm-300,Y(1.3)-40,'801 D4',DW.spk,80);
+  s+=eHTM(cxm,st/1000,Y,1)+txt(-40+cxm+1000,Y(st/1000+.2),'HTM81 D4 upper · inverted',DW.spk,76,'start');
+  s+=eHTM(cxm,.63-.334,Y)+txt(cxm,4250-60,'HTM81 D4 lower · tight under the LED',DW.spk,70);
+  s+=dimH(0,q,4250+300,f0(q))+dimH(q,3*q,4250+300,f0(2*q)+' c/c')+dimH(3*q,Wm,4250+300,f0(q));
+  s+=dimV(-250,Y(st/1000),Y(.63),'',1)+dimV(-250,Y(.63),4250,'630',1)+dimV(-250,Y(H),Y(st/1000),'403',1)+txt(-290,Y(1.9),'LED 2,700',DW.dim,96,'end');
+  s+=dimV(Wm+250,Y(.69),4250,'')+txt(Wm+330,Y(1.25),'Sub top 690',DW.dim,80,'start')+txt(Wm+330,Y(1.25)+110,'Driver top ≈545',DW.new,80,'start')+txt(Wm+330,Y(1.25)+220,'LED bottom 630',DW.led,80,'start')+txt(Wm+330,Y(1.25)+330,'≈85 clear',DW.new,80,'start');
+  return s+`</svg>`+KEY+`<p class="dwgNote">Front wall, viewed from the seats. Room-left on the left. The LED stays at 630 mm. Each DBA15's top 60 mm sits behind the LED's bottom edge, but the 15″ driver (dashed line marks its top) ends about 85 mm below the LED, so it isn't blocked. Subs are recessed in the 450 mm build-out with faces flush. Dimensions in mm from finished faces.</p>`; }
+
+function rearSVG(){ const Wm=W*1000,Hr=3133,Y=y=>Hr+517-y,X=u=>Wm-u,q=Wm/4,rr=1186,rn=718;
+  let s=`<svg class="dwg" viewBox="-950 -300 8300 4750" font-family="Inter,system-ui,sans-serif">`;
+  s+=rect(-450,0,Wm+900,Hr+517,DW.line,'none',0,8)+`<line x1="-450" y1="517" x2="${Wm+450}" y2="517" stroke="${DW.spk}" stroke-width="8"/>`+txt(Wm+470,547,'False ceiling',DW.dim,80,'start')+txt(Wm+470,Hr+517,'+600 riser',DW.dim,80,'start');
+  s+=`<pattern id="hat" width="60" height="60" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="60" stroke="${DW.spk}" stroke-width="8"/></pattern>`;
+  s+=rect(0,Y(500),300,500,DW.spk,'url(#hat)',0,6)+rect(Wm-300,Y(500),300,500,DW.spk,'url(#hat)',0,6)+txt(150,Y(500)-40,'SA duct',DW.dim,70)+txt(Wm-150,Y(500)-40,'SA duct',DW.dim,70);
+  // rear surrounds as drawn (951 / 969 above riser)
+  [[rr,951],[Wm-rr-244,969]].forEach(([u,b])=>{ s+=rect(X(u+244),Y(b+440),244,440,((state.cfg==='wf24'||state.cfg==='wf44'))?DW.old:DW.spk,'rgba(142,142,147,.12)',(state.cfg==='wf24'||state.cfg==='wf44')); });
+  s+=txt(X(rr+122),Y(1391)-40,'805 D4',DW.spk,76)+txt(X(Wm-rr-122),Y(1409)-40,'805 D4',DW.spk,76);
+  [[rn,951],[Wm-rn-244,969]].forEach(([u,b])=>{ s+=rect(X(u+244),Y(b+440),244,440,DW.new,'none',1,8); });
+  s+=txt(X(rn+122),Y(1391)-120,'phase 2',DW.new,64)+txt(X(Wm-rn-122),Y(1409)-120,'phase 2',DW.new,64);
+  [[90],[Wm-510]].forEach(([u])=>{ s+=rect(X(u+420),Y(420),420,420,DW.old,'none',1,8)+xmark(X(u+420),Y(420),420,420,DW.old); });
+  [q,3*q].forEach(c=>{ s+=rect(X(c+335),Y(2775),670,850,DW.new,'rgba(255,159,10,.28)',0,12)+`<circle cx="${X(c)}" cy="${Y(2350)}" r="190" fill="none" stroke="${DW.new}" stroke-width="10"/>`+txt(X(c),Y(2775)-40,'DBA15',DW.new,80);
+    s+=rect(X(c+335),Y(1208),670,850,DW.new,'none',1,10)+txt(X(c),Y(1208)-40,'DBA15 phase 2',DW.new,70); });
+  s+=dimH(0,q,Hr+517+170,f0(q))+dimH(q,3*q,Hr+517+170,f0(2*q)+' c/c')+dimH(3*q,Wm,Hr+517+170,f0(q));
+  s+=dimV(-250,Y(2350),Y(0),'2,350 c/l',1)+dimV(-250,Y(Hr),Y(2775),'358',1)+dimV(Wm+250,Y(783),Y(0),'783 c/l phase 2')+dimH(X(rn),Wm,Y(1700),f0(rn),1)+dimH(0,X(Wm-rn),Y(1700),f0(rn),1);
+  return s+`</svg>`+KEY+`<p class="dwgNote">Rear wall, viewed from the seats, so room-left is on the right. Two DBA15s go in the upper row (3/4 of the 3,133 mm height above the riser) and clear the rear 805s. The lower row is phase 2 and only fits if the rear 805s move to ${f0(rn)} mm from the side walls.</p>`; }
+
+function planSVG(){ const Wm=W*1000,Lm=L*1000,q=Wm/4,cxm=Wm/2;
+  let s=`<svg class="dwg" viewBox="-1700 -900 9300 10200" font-family="Inter,system-ui,sans-serif">`;
+  s+=`<path d="M -450 -450 H ${Wm+450} V ${Lm+450} H ${AL.u0*1000-450} V ${AL.v0*1000-450} H -450 Z" fill="none" stroke="${DW.line}" stroke-width="10"/>`;
+  s+=`<path d="M 0 0 H ${Wm} V ${Lm} H ${AL.u0*1000} V ${AL.v0*1000} H 0 Z" fill="rgba(255,255,255,.03)" stroke="${DW.spk}" stroke-width="8" stroke-dasharray="30 20"/>`;
+  s+=txt(AL.u0*500,AL.v0*1000+900,'Entry',DW.dim,90)+txt(AL.u0*500,AL.v0*1000+1010,'vestibule',DW.dim,90);
+  s+=`<line x1="0" y1="${PLAT_V*1000}" x2="${Wm}" y2="${PLAT_V*1000}" stroke="${DW.dim}" stroke-width="8" stroke-dasharray="40 30"/>`+txt(Wm+80,PLAT_V*1000+30,'+600 platform edge',DW.dim,80,'start');
+  s+=`<line x1="532" y1="40" x2="5332" y2="40" stroke="${DW.led}" stroke-width="40"/>`+txt(900,190,'LED 4,800',DW.led,90,'start');
+  s+=rect(cxm-423,60,847,371,DW.spk,'rgba(142,142,147,.15)')+txt(cxm,540,'HTM81 upper + lower',DW.spk,76);
+  [.30,W-.30].forEach(u=>s+=pTear(u,.72,490,600));
+  [R1,R2].forEach(r=>rowU(5,W/2).forEach(u=>s+=rect(u*1000-370,(r.v-ARM_F)*1000,740,900,DW.line,'rgba(255,255,255,.05)',0,8)));
+  const sp=speakers();
+  sp.filter(p=>p.top).forEach(p=>s+=pTear(p.u,p.v,240,340,DW.spk,'rgba(142,142,147,.08)'));
+  sp.filter(p=>p.k==='805'&&!p.top&&p.n.indexOf('rs')<0).forEach(p=>s+=pTear(p.u,p.v,240,340));
+  s+=pTear(RR(),L-.24,240,340)+pTear(W-RR(),L-.24,240,340); if(!(state.cfg==='wf24'||state.cfg==='wf44')) s+=rect(718-122,L*1000-380,244,340,DW.new,'none',1,8)+rect(Wm-718-122,L*1000-380,244,340,DW.new,'none',1,8);
+  [[300,210],[Wm-300,210],[300,Lm-210],[Wm-300,Lm-210]].forEach(([x,y])=>s+=rect(x-210,y-210,420,420,DW.old,'none',1,8)+xmark(x-210,y-210,420,420,DW.old));
+  [q,3*q].forEach(c=>{ s+=rect(c-425,-330,850,330,DW.new,'rgba(255,159,10,.35)',0,12)+rect(c-335,Lm,670,330,DW.new,'rgba(255,159,10,.35)',0,12); });
+  [q,3*q].forEach(c=>s+=rect(c-425,20,850,670,DW.new,'none',1,10)+txt(c,380,'ceiling void · ideal',DW.new,70));
+  s+=txt(q,-400,'F1 · DBA15',DW.new,90)+txt(3*q,-400,'F2 · DBA15',DW.new,90)+txt(q,Lm+470,'R1 (R3 below)',DW.new,86)+txt(3*q,Lm+470,'R2 (R4 below)',DW.new,86);
+  s+=dimH(0,q,-650,f0(q),1)+dimH(q,3*q,-650,f0(2*q)+' c/c',1)+dimH(3*q,Wm,-650,f0(q),1)+dimV(Wm+700,0,Lm,'≈ 8,000 finished')+dimH(0,Wm,Lm+700,'5,864 finished');
+  s+=`<circle cx="${cxm}" cy="${R2.v*1000}" r="70" fill="#FF453A"/>`+txt(cxm,R2.v*1000+250,'MLP',DW.old,80);
+  return s+`</svg>`+KEY+`<p class="dwgNote">Plan scaled from the R3 drawings. Surrounds, wides and the six ceiling speakers are drawn aimed at the MLP, as in the R3 elevations; the tops sit in the 517 mm ceiling void. Following Trinnov's L-shaped-room guidance, every sub position is taken from the 5,864 mm main room, not the vestibule. No subs go in the vestibule.</p>`; }
+
+function renderSheet(){ document.querySelectorAll('#shTabs button').forEach(b=>b.classList.toggle('on',b.dataset.sh===state.sh));
+  document.getElementById('shBody').innerHTML=state.sh==='front'?frontSVG():state.sh==='rear'?rearSVG():planSVG(); }
+document.getElementById('shTabs').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; state.sh=b.dataset.sh; renderSheet(); });
+
+/* ---------- card ---------- */
+const row=(k,v)=>`<div class="row"><span>${k}</span><b>${v}</b></div>`;
+const tile=(v,k,c)=>`<div class="tile"><div class="v">${c?`<i class="dot d-${c}"></i>`:''}${v}</div><div class="k">${k}</div></div>`;
+const STEPN=['','Room & Entry','Viewing Angles','Speakers','WaveForming','LED Screen','Drawing Changes'];
+const CFGN={r3:'R3 layout',wf22:'Revised',wf24:'Revised + phase 2',wf44:'Ideal 4 + 4'};
+function cardHTML(){ const st=state.step,g=Gm,rear=L-(R2.v+BACK_R), top=t=>`<div class="eyebrow">${CFGN[state.cfg]} · ${STEPN[st]}</div><h1>${t}</h1>`;
+  if(st===1) return top('Built around a 219″ wall of light.')+`<p class="cap">You come in at the rear left, onto the +600 level of the back row. Row 1 sits on the floor, and the side aisles step down beside it in four 150 mm steps.</p>
+   <div class="tiles">${tile('10','Recliners (5 + 5)')}${tile(rear.toFixed(2)+'<small>m</small>','Row 2 to the rear wall',rear>=1?'ok':'bad')}</div>
+   <div class="list">${row('Finished room','5.86 × ≈8.0 m')}${row('Height','3.73 m front · 3.13 m over riser')}${row('Levels','Row 1 floor · row 2 +600')}${row('Shape','L-shaped (entry vestibule)')}</div>
+   <p class="fine">Dimensions are scaled from the R3 drawings (08-07-2025). Finished width is from Section D (1,186 + 244 + 3,004 + 244 + 1,186). The length is approximate, so please confirm it on site.</p>`;
+  if(st===2){ const c=Math.round(g.clr*1000);
+    return top('Row 2 is at reference. Row 1 is close.')+`<p class="cap">Angles are measured from each seated head. Trinnov and SMPTE allow no seat wider than 61° and put the main seat near 44°. The R3 speaker-angle sheet measures from row 1; Trinnov uses the reference seat, which here is the centre of row 2.</p>
+   <div class="tiles">${tile(g.ang1.toFixed(0)+'°','Row 1 field of view',g.ang1>62?'bad':'ok')}${tile(g.ang2.toFixed(0)+'°','Row 2 · main seat',Math.abs(g.ang2-44)<=5?'ok':'warn')}${tile(c+'<small>mm</small>','Sightline over row-1 eyes',c>=100?'ok':'warn')}${tile(Math.round(SB()*1000)+'<small>mm</small>','LED bottom height')}</div>
+   <p class="fine">Row 1 is about ${(R1.v-SCRV).toFixed(1)} m from the screen. Trinnov's closest distance for a 4.8 m screen is ${(0.84*SW).toFixed(2)} m. The layout is kept as drawn, but the client should know this.</p>`; }
+  if(st===3){ const s=speakers(),f=n=>s.find(x=>x.n===n),mw=medianWide();
+    return top('The R3 layout, checked against Trinnov.')+`<p class="cap">B&W 800 D4 in a 9.x.6 layout. The LED doesn't let sound through, so L and R stand beside it and the HTM81 centre goes above and below it, which is Trinnov's flat-screen case. The two centres mirror each other about the screen: the upper one is inverted, so both tweeters sit right against the picture edge and the dialogue image centres on the screen. Every surround and all six ceiling speakers are angled at the main seat, Trinnov's 'point toward the MLP' method.</p>
+   <div class="tiles">${tile(Math.round(f('R').az)+'°','Screen L and R · guide 22–30°',f('R').az<=30?'ok':'warn')}${tile(Math.round(f('Rw').az)+'°','Wides · median angle '+Math.round(mw)+'°',Math.abs(f('Rw').az-mw)<=5?'ok':'warn')}${tile(Math.round(f('Rs').az)+'°','Sides · between the rows','ok')}${tile(Math.round(f('Rrs').az)+'°','Rears · guide 135–150°',f('Rrs').az>=135&&f('Rrs').az<=150?'ok':'warn')}</div>
+   <div class="list">${row('Tops (front / mid / rear)',Math.round(f('Rtf').el)+'° · '+Math.round(f('Rtm').el)+'° · '+Math.round(f('Rtr').el)+'° up')}${row('Centre','HTM81 D4 pair · upper inverted')}${row('Subwoofers',state.cfg==='r3'?'4 × DB1D, corners':subs().length+' × MAG DBA15')}${row('Processor','Trinnov Altitude32')}</div>
+   <p class="fine">The tops sit in the ceiling void about 200 mm above the false ceiling, aimed through it. The front pair lands at about ${Math.round(f('Rtf').el)}°, a little under the usual 35–45°, and Trinnov's 3D Remapping corrects for that.</p>`; }
+  if(st===4){ const wf=state.cfg!=='r3', n=subs().length;
+    return top(wf?'Bass that leaves the room once.':'Four corners, four sets of reflections.')+`<p class="cap">${state.cfg==='wf44'?'The ideal layout. Two DBA15s below the LED and two in the ceiling void above it, firing down, launch one flat wavefront from floor to ceiling. Four on the rear wall absorb it. The floor and ceiling rows together cancel the first height mode (46 Hz), which is what row 2 was left with.':wf?'The two front DBA15s below the LED send out one flat wavefront. The rear DBA15s absorb it, so it doesn\'t bounce back and build room modes.':'Corner subwoofers radiate in all directions. Every wall reflects the sound back, and the reflections overlap into room modes. Trinnov says the physics prevents a controlled wavefront from corners.'}</p>
+   <div class="pill" id="bassSeg"><button data-cfg="r3">R3 corners</button><button data-cfg="wf22">2 + 2</button><button data-cfg="wf24">2 + 4</button><button data-cfg="wf44">Ideal 4 + 4</button></div>
+   <div class="tiles">${tile('±'+Math.max(...g.bst.dev).toFixed(1)+'<small>dB</small>','Worst seat vs room average, 30–100 Hz',Math.max(...g.bst.dev)<=3?'ok':(Math.max(...g.bst.dev)<=6?'warn':'bad'))}${tile(g.bst.ok+'<small>/10</small>','Seats within ±3 dB',g.bst.ok===10?'ok':(g.bst.ok>=5?'warn':'bad'))}${tile(g.bst.worst.toFixed(0)+'<small>dB</small>','Largest seat-to-seat gap at any frequency')}${tile(n,wf?'MAG Theatron DBA15':'B&W DB1D')}</div>
+   ${curveSVG(g.bst)}
+   <p class="cap" style="margin-top:12px">${Math.max(...g.bst.dev)<=3?'Every seat hears the same bass.':(Math.max(...g.bst.dev)<=6?'Close. Most of what is left is a few dB between the two rows around 60–80 Hz, not seat to seat.':'Bass changes a lot from seat to seat, and row 2 gets it worst.')}</p>
+   <div class="list">${row('Room modes','Width 29 · 59 · 88 Hz, height 46 · 92 Hz')}${row('Front emitters',wf?(state.cfg==='wf44'?'2 below the LED + 2 in the ceiling void':'2 below the LED, ¼ and ¾ across'):'—')}${row('Rear absorbers',wf?(state.cfg==='wf22'?'2, upper row':'4, planar 2 × 2'):'—')}</div>
+   ${wf?`<details><summary>Subwoofer positions</summary><table><tr><th>Sub</th><th>From left wall</th><th>Centre height</th></tr>${subs().map(s=>`<tr><td>${s.n} ${s.front?'front':'rear'}</td><td>${f0(s.u*1000)} mm</td><td>${s.ceil?'Ceiling void, firing down':(s.front?f0(s.y*1000)+' mm':f0((s.y-RIS)*1000)+' mm over riser')}</td></tr>`).join('')}</table></details>`:''}
+   <p class="fine">Room model, not a measurement: modes of the main room from 30 to 100 Hz. With WaveForming, each sub's level and timing is optimised per frequency toward a front-to-back plane wave, tuned on 40 points around the heads and scored at the 10 seats. The four R3 corner subs run on one feed. ${wf?'Trinnov recommends cutting rear subs before front ones, so 2 + 2 is a valid start. Trinnov\'s textbook 6 + 4 planar array scores about ±1.1 dB in the same model, but four of its front positions fall behind the LED, so the 4 + 4 layout is the ideal one for this room. ':''}Trinnov's on-site measurement is the final word.</p>`; }
+  if(st===5){ const sb=SB();
+    return top('A 219″ LED, as drawn.')+`<p class="cap">The LED stays at 630 mm. The front DBA15s tuck 60 mm behind its bottom edge, but their drivers end about 85 mm below the LED, so the sound path is open. The upper centre still fits under the false ceiling.</p>
+   <div class="tiles">${tile('630<small>mm</small>','LED bottom')}${tile(f0(3733-(sb*1000+2700))+'<small>mm</small>','LED top to false ceiling · HTM81 is 334')}${tile(Gm.vert2.toFixed(0)+'°','Row 2 vertical · Trinnov reference 25°','ok')}${tile(Gm.vert1.toFixed(0)+'°','Row 1 vertical · UHD limit 34°',Gm.vert1>34?'bad':'ok')}</div>
+   <div class="list">${row('Size','4,800 × 2,700 · 16:9')}${row('Row 1 look-up to top',Gm.up1.toFixed(0)+'°')}${row('Driver to LED edge','≈85 mm clear')}${row('Subs near the LED','WMT-15 anti-vibration, LED not resting on subs')}</div>`; }
+  return top('What changes on the drawing.')+`<p class="cap">Revisions to R3 so that MAG Theatron DBA15s can run WaveForming. The speaker layout and the LED height don't change.</p>
+   <ol class="rev"><li>Remove the 4 × B&amp;W DB1D <span>(front and rear corners).</span></li>
+   <li>Add 2 × DBA15 on the front wall below the LED, on their side. <span>Centres 1,466 mm from each side wall and 2,932 mm apart, recessed in the 450 mm build-out with faces flush, 20 mm off the floor. The top 60 mm sits behind the LED edge; the driver stays ≈85 mm clear.</span></li>
+   <li>Support the LED frame from the wall, not from the subs. <span>Keep a gap so sub vibration can't reach the LED modules.</span></li>
+   <li>Add 2 × DBA15 upright on the rear wall. <span>Centres 1,466 mm from each side, 2,350 mm above the +600 riser, recessed in the build-out.</span></li>
+   <li>Run a speaker cable to each sub on its own amp channel, from a Trinnov Altitude32.</li>
+   <li>Phase 2, optional: add 2 more rear DBA15s 783 mm above the riser. <span>This needs the rear 805 D4s moved from 1,186 to 718 mm from the side walls.</span></li>
+   <li>Ideal WaveForming (4 + 4): phase 2, plus 2 DBA15s in the ceiling void above the LED. <span>Lying flat and firing down through a grille in the false ceiling, 1,466 mm from each side wall, hung from the RCC slab on anti-vibration mounts. Clear of the upper HTM81.</span></li></ol>
+   <p class="fine">Check the driver position on MAG's DBA15 drawing (assumed centred), that the sub can lie on its side, and the WMT-15 bracket depth against the 450 mm build-out (the sub is 330 mm deep).</p>`; }
+
+function applyStep(moveCam=true){ const st=state.step; document.getElementById('cardBody').innerHTML=cardHTML();
+  document.querySelectorAll('#dock button,#dots button').forEach(b=>b.classList.toggle('on',+b.dataset.step===st));
+  G.dim.visible=st===1; G.ang.visible=st===2; G.spk.visible=st===3; G.bass.visible=st===4; G.led.visible=st===5;
+  const see=st===3||st===4; G.screen.material.opacity=see?.15:1;
+  G.front.traverse(o=>{ if(o.isMesh) o.material=see?M.wallG:M.wall; });
+  const sh=document.getElementById('sheet'); sh.classList.toggle('on',st===6); stage.style.visibility=st===6?'hidden':''; if(st===6) renderSheet();
+  const bs=document.getElementById('bassSeg'); if(bs){ bs.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.cfg===state.cfg)); bs.onclick=e=>{ const b=e.target.closest('button'); if(!b) return; state.cfg=b.dataset.cfg; build(); place(); }; }
+  if(moveCam) setView(st===2?'top':(st===5?'section':'iso'),st); else place(); }
+
+/* ---------- camera ---------- */
+let orb={theta:0,phi:.6,r:10,target:new THREE.Vector3(W/2,1.2,L/2)};
+function setView(v,st){ state.view=v; document.querySelectorAll('#views [data-view]').forEach(b=>b.classList.toggle('on',b.dataset.view===v));
+  if(v==='seat'){ camera=persp; place(); return; } camera=ortho;
+  if(v==='iso'){ const b={1:[.62,11,-.9],3:[.7,10.4,-.75],4:[.5,10.6,-.55],6:[.62,11,-.9]}[st||state.step]||[.62,11,-.9]; orb.theta=Math.atan2(1,-b[2]); orb.phi=b[0]; orb.r=b[1]; orb.target.set(W/2-.3,1.1,L/2-.4); }
+  if(v==='top'){ orb.theta=0; orb.phi=1.5699; orb.r=10.2; orb.target.set(W/2-.4,0,L/2-.6); }
+  if(v==='section'){ orb.theta=Math.PI/2; orb.phi=0; orb.r=7.6; orb.target.set(W/2,1.8,L/2-.35); }
+  place(); }
+function place(){ if(state.view==='seat'){ const m=Gm.mlp; persp.position.copy(P(m.u,m.y+.05,m.v)); persp.lookAt(P(Gm.cx,SB()+SH*.45,SCRV)); persp.updateProjectionMatrix(); cut(); return; }
+  const {theta,phi,r,target}=orb; ortho.position.set(target.x+r*Math.cos(phi)*Math.sin(theta),target.y+r*Math.sin(phi),target.z+r*Math.cos(phi)*Math.cos(theta));
+  ortho.up.set(0,1,0); if(phi>1.55) ortho.up.set(-Math.sin(theta),0,-Math.cos(theta)); ortho.lookAt(target);
+  const w=stage.clientWidth,h=Math.max(1,stage.clientHeight),a=w/h,phone=w<760; let hh=r*.5; if(a<1) hh=r*.5/a*.9;
+  const cardEl=document.getElementById('card'), min=cardEl.classList.contains('min'); let fx=0,fy=0;
+  if(phone){ const covered=(min?120:Math.min(h*.42,cardEl.offsetHeight||h*.4))+64, top=90; fy=-((covered-top)/2)/h*2*hh; }
+  else if(w>1000){ const cw=(cardEl.offsetWidth||360)+28; fx=-(cw/2)/w*2*hh*a; }
+  ortho.left=fx-hh*a; ortho.right=fx+hh*a; ortho.top=fy+hh; ortho.bottom=fy-hh; ortho.updateProjectionMatrix(); cut(); }
+function cut(){ const d=camera.position.clone().sub(new THREE.Vector3(W/2,1.5,L/2)); walls.forEach(w=>{ const hide=w.userData.n.dot(d)>.5; if(w===G.front&&(state.step===3||state.step===4)&&!hide) return; w.traverse(o=>{ if(o.isMesh) o.material=hide?M.ghost:M.wall; if(o.isLineSegments) o.visible=!hide; }); }); }
+let drag=null; const cv=renderer.domElement; const ptrs=new Set();
+cv.addEventListener('pointerdown',e=>{ ptrs.add(e.pointerId); if(ptrs.size>1){ drag=null; return; } if(state.view==='seat'){ state.view='iso'; camera=ortho; document.querySelectorAll('#views [data-view]').forEach(b=>b.classList.remove('on')); } drag={x:e.clientX,y:e.clientY,t:orb.theta,p:orb.phi}; cv.setPointerCapture(e.pointerId); });
+cv.addEventListener('pointermove',e=>{ if(!drag||ptrs.size>1) return; orb.theta=drag.t-(e.clientX-drag.x)*.008; orb.phi=Math.max(0,Math.min(1.5699,drag.p+(e.clientY-drag.y)*.006)); place(); });
+['pointerup','pointercancel','pointerleave'].forEach(t=>cv.addEventListener(t,e=>{ ptrs.delete(e.pointerId); drag=null; }));
+cv.addEventListener('wheel',e=>{ e.preventDefault(); orb.r=Math.max(3,Math.min(22,orb.r*(1+Math.sign(e.deltaY)*.08))); place(); },{passive:false});
+let pinch=null;
+cv.addEventListener('touchstart',e=>{ if(e.touches.length===2){ pinch=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY); drag=null; } },{passive:true});
+cv.addEventListener('touchmove',e=>{ if(e.touches.length===2&&pinch){ const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY); orb.r=Math.max(3,Math.min(22,orb.r*pinch/d)); pinch=d; place(); } },{passive:true});
+
+const GS={base:[1,2,3,4,5,6],e:[1],ang:[2],spk:[3],bass:[4],led:[5]},v3=new THREE.Vector3();
+function labelsTick(){ const w=stage.clientWidth,h=stage.clientHeight; labels.forEach(l=>{ if(state.step===6||!(GS[l.grp]||[]).includes(state.step)){ l.el.style.display='none'; return; }
+  v3.copy(l.pos).project(camera); if(v3.z>1||v3.z<-1||Math.abs(v3.x)>1.05||Math.abs(v3.y)>1.05){ l.el.style.display='none'; return; }
+  l.el.style.display='block'; l.el.style.left=((v3.x+1)/2*w)+'px'; l.el.style.top=((1-v3.y)/2*h)+'px'; }); }
+function resize(){ const w=stage.clientWidth,h=stage.clientHeight; renderer.setSize(w,h,false); persp.aspect=w/Math.max(1,h); persp.fov=w<h?78:58; persp.updateProjectionMatrix(); place(); }
+window.addEventListener('resize',resize);
+const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches; let last=performance.now();
+function loop(now){ const dt=Math.min(.05,(now-last)/1000); last=now; if(state.step===4) tickWaves(reduce?dt*.4:dt); renderer.render(scene,camera); labelsTick(); requestAnimationFrame(loop); }
+
+document.getElementById('optSeg').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; state.cfg=b.dataset.cfg==='r3'?'r3':(state.cfg==='r3'?'wf22':state.cfg); build(); setView(state.view==='seat'?'iso':state.view); });
+['dock','dots'].forEach(id=>document.getElementById(id).addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; state.step=+b.dataset.step; applyStep(true); }));
+document.getElementById('grab').onclick=()=>{ document.getElementById('card').classList.toggle('min'); place(); };
+const go=d=>{ state.step=Math.max(1,Math.min(6,state.step+d)); applyStep(true); };
+document.getElementById('prev').onclick=()=>go(-1); document.getElementById('next').onclick=()=>go(1);
+document.getElementById('views').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b&&b.dataset.view) setView(b.dataset.view); });
+document.getElementById('savePng').addEventListener('click',()=>{ const a=document.createElement('a');
+  if(state.step===6){ const svg=document.querySelector('#shBody svg'); a.download='SanjayLalBhai_'+state.sh+'_elevation.svg'; a.href='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg.outerHTML.replace('<svg','<svg xmlns="http://www.w3.org/2000/svg" style="background:#1d1d1f"')); a.click(); return; }
+  a.download='SanjayLalBhai_'+state.cfg+'_Step'+state.step+'.png'; a.href=renderer.domElement.toDataURL('image/png'); a.click(); });
+window.addEventListener('keydown',e=>{ if(e.key==='ArrowRight') go(1); if(e.key==='ArrowLeft') go(-1); });
+if(window.innerWidth<760) document.getElementById('card').classList.add('min');
+document.getElementById('cardBody').addEventListener('click',e=>{ if(window.innerWidth<760&&e.target.closest('h1,.eyebrow')){ document.getElementById('card').classList.toggle('min'); place(); } });
+build(); resize(); setView('iso',1); requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
